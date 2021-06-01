@@ -1,0 +1,64 @@
+#두 모평균 비교
+import pandas as pd
+data=pd.DataFrame({'before':[.430,.266,.567,.531,.707,.716,.651,.589,.469,.723],'after':[.415,.238,.390,.410,.605,.609,.632,.523,.411,.612]})
+
+from scipy.stats import shapiro
+shapiro(data.before)
+shapiro(data['after'])
+
+from scipy.stats import ttest_rel
+from scipy import stats 
+
+print("one_sample 평균1)",data['before'].mean())
+print("one_sample 평균2)",data['after'].mean())
+print("one_sample 표준편차1)",data['before'].std())
+print("one_sample 표준편차2)",data['after'].std())
+result=stats.ttest_rel(data['before'],data['after'])
+print("t 검정통계량:%5f, p값:%5f"%result)
+
+#셋 이상의 모평균 비교(두 집단 이상의 평균차이 검정)
+from sklearn import datasets
+dataset=datasets.load_iris()
+data=dataset.data
+
+import pandas as pd
+a=pd.DataFrame(data)
+data1=a.iloc[0:51,0];data2=a.iloc[51:101,0];data3=a.iloc[101:,0]
+
+from scipy import stats
+from scipy.stats import shapiro
+#귀무가설:정규성0, 대립가설:정규성x
+shapiro(data1)
+shapiro(data2)
+shapiro(data3)
+stats.levene(data1,data2,data3)#자료 3개에 대한 등분산성검정 / 귀무:등분산0,대립:등분산:x
+#만족x
+
+#등분산 가정 만족x : Welch 방법 사용
+
+from scipy.stats import f_oneway
+resylt=f_oneway(data1,data2,data3)
+print("F 검정통계량:%5f, p값:%5f"%result)
+#귀무가설을 기각한다. 평균의 차이 존재함.
+
+
+
+
+from sklearn import datasets
+dataset=datasets.load_iris()
+data=dataset.data
+target=dataset.target
+
+import pandas as pd
+a=pd.DataFrame(data,columns=['A1','A2','A3','A4'])#data
+b=pd.DataFrame(target,columns=["group"])#group자료
+d=pd.concat([a,b],axis=1)#데이터 결합(변수):axis=1
+
+#회귀분석 파트 있지만 안함.
+
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+posthoc1=pairwise_tukeysd(d['A1'],#반응변수
+                          d['group'],#그룹자료
+                          alpha=0.05)#유의수준
+print(posthoc1)
+fig=posthoc1.plot_simultaneous()#겹치는 그룹이 시각적으로도 없음:평균은 차이가 난다.
