@@ -1,0 +1,65 @@
+import matplotlib.pyplot as pt
+import seaborn as sns
+
+titanic=sns.load_dataset("titanic")
+
+sns.set_style("darkgrid")
+fig=pt.figure(figsize=(15,5))
+ax1=fig.add_subplot(1,2,1)
+ax2=fig.add_subplot(1,2,2)
+
+sns.regplot(x='age', y='fare', data=titanic, ax=ax1)
+sns.regplot(x='age', y='fare', data=titanic, ax=ax2, fit_reg=False)
+pt.show()
+
+
+sns.set_style("darkgrid")
+fig=pt.figure(figsize=(15,5))
+ax1=fig.add_subplot(1,3,1)
+ax2=fig.add_subplot(1,3,2)
+ax3=fig.add_subplot(1,3,3)
+
+sns.distplot(titanic['fare'],ax=ax1)
+sns.distplot(titanic['fare'],hist=False ,ax=ax2)
+sns.distplot(titanic['fare'],kde=False ,ax=ax3)
+
+ax1.set_title('titanic-hist/ked')
+ax2.set_title('titanic-ked')
+ax3.set_title('titanic-hist')
+pt.show()
+
+sns.set_style("whitegrid")
+fig=pt.figure(figsize=(15,5))
+ax1=fig.add_subplot(1,2,1)
+ax2=fig.add_subplot(1,2,2)
+
+sns.stripplot(x='class', y='age', data=titanic,ax=ax1)
+sns.swarmplot(x='class', y='age', data=titanic,ax=ax2)
+ax1.set_title("Strip Plot");ax2.set_title("Swarm Plot")
+
+pt.show()
+
+sns.set_style("ticks")
+fig=pt.figure(figsize=(15,5))
+ax1=fig.add_subplot(1,2,1)
+ax2=fig.add_subplot(1,2,2)
+
+sns.barplot(x='class', y='age', data=titanic,ax=ax1)
+sns.countplot(x='class', data=titanic, palette="Set3", ax=ax2)
+ax1.set_title("Bar Plot");ax2.set_title("Count Plot")
+
+pt.show()
+
+sns.set_style("whitegrid")
+
+J1=sns.jointplot(x='fare', y='age', data='titanic')
+J2=sns.jointplot(x='fare', y='age', data='titanic', kind='reg')
+J3=sns.jointplot(x='fare', y='age', data='titanic', kind='hex')
+J4=sns.jointplot(x='fare', y='age', data='titanic', kind='kdg')
+
+J1.fig.subtitle('titanic fare-scatter', size=15)
+J2.fig.subtitle('titanic fare-reg', size=15)
+J3.fig.subtitle('titanic fare-hex', size=15)
+J4.fig.subtitle('titanic fare-kdg', size=15)
+
+pt.show()
