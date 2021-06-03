@@ -1,0 +1,30 @@
+#표 만들고 이원카이제곱 검정
+import pandas as pd 
+data=[[30,10],[35,5],[20,12],[20,20]]#list에 list 쌓기.
+'''
+다른 방법은 dict사용. 
+data={'a':[30,35,20,20],'b':[10,5,12,20]}
+x=pd.DataFrame(data)
+pd.crosstab([x,a,x,b],margins=False)#연속형이면 이렇게 분할 표 만들어야 함, 분석이니까 False
+'''
+from scipy.stats import chi2_contingency
+chi2, pval, dof, expected, =chi2_contingency(data)#chi2_contingency(data) 실행하면  chi2,p-val,자유도 값이 나오고 그 밑에 기대표가 나옴.
+msg='Test Statistic {}\np-value:{}\nDegree of Freedom'
+print(msg.format(chi2,pval, dof))#print안에 format이 있음. %랑 같은 함수임. 근데 중괄호 안에 값을 넣을 수 있음.ㄷㄷㄷㄷ
+print(expected)#분할표 형태로 기대값 출력됨
+pd.DataFrame(expected)#그냥 print하면 보기 힘드니까 보기 편하게 DataFrame형태로 출력.
+'''
+           0          1
+0  27.631579  12.368421
+1  27.631579  12.368421
+2  22.105263   9.894737
+3  27.631579  12.368421
+
+이름 붙이려면
+pd.DataFrame(expected,
+             index['A','B','C','D'],
+             colums=['a','b'])
+x.columns #변수이름 출력
+colums=x.colums #직접 대입 안하고, 그 전 변수로 덮어씌우기.
+'''
+
