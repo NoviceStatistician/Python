@@ -1,0 +1,169 @@
+work=float(input("근로시간 입력:"))
+pay=8000
+if work>7:
+    over=work-7
+    money=work*pay+(over*pay*0.5)
+else:
+    money=work*pay
+print("임금:%.2f" %money)
+
+gender=input("성별입력(남:m 여:f):")
+if gender.lower()=='f':
+    age=int(input("나이 입력:"))
+    if 10<=age<=12:
+        print("입단을 할 수 있습니다.")
+    else:
+        print("나이가 맞지 않습니다.")
+else:
+    print("여자만 모집합니다.")
+    
+total=0
+count=1
+while count<=10:
+    total+=count
+    count+=1
+print("합:",total)
+
+total=0
+count=1
+while True:
+    total+=count
+    if count==10:
+        break
+    count+=1
+print("합:", total)
+
+total=0
+while True:
+    number=int(input("수 입력:"))
+    if number==0:
+        break
+    total+=number
+print("합:",total)
+
+passes=0; failuer=0
+count=1
+while count<=10:
+    score=int(input("점수 입력:"))
+    if score<80:
+        failuer+=1
+    elif 80<=score:
+        passes+=1
+    count+=1
+print("합격자 수:",passes)
+
+minnum=int(input("최소값 입력:"))
+maxnum=int(input("최대값 입력:"))
+print((minnum+maxnum)/2)
+
+minnum=int(input("최소값 입력:"))
+maxnum=int(input("최대값 입력:"))
+while True:
+    if minnum>=maxnum:
+        break
+    minnum+=1
+    maxnum-=1
+print("중간값:",minnum)
+
+#라인과 별의 수를 입력하여 별 블록 생성하기
+line = int(input("라인 개수 : "))
+star = int(input("별의 개수 : "))
+for lcount in range(line):
+    for scount in range(star):
+        print("*", end="")
+print()
+
+#별을 이용하여 삼각형 그리기
+for line in range(1, 6):
+    for star in range(line):
+        print("*", end="")
+    print()
+
+#coninue구문
+#1에서 20까지의 수중에서 2의 배수와 3의 배수를 제외한 수 구하기
+for number in range(1, 21):
+    if number % 2 == 0 or number % 3 == 0:
+        continue
+print(number, end=" ")
+
+for line in range(1, 5):
+    for star in range(line, 5):
+        print("*", end="")
+    print()
+
+# 수를 입력하여 소수(prime) 판별하기
+while True:
+    prime=True
+    number=int(input("수를 입력하세요(0종료):"))
+    if number==0:
+        break
+    elif number==1:
+        print("다시 입력하세요.")
+        continue    
+    for i in range(2, number):
+        if number%i==0:
+            prime==False
+            break
+
+while True:
+    print("비만도 판정")
+    height = float(input("당신의 신장(m)은 ? "))
+    weight = float(input("당신의 체중(kg)은 ? "))
+    bmi = weight / pow(height, 2)
+    print("당신의 BMI값은 %.2f입니다" %bmi)
+    if bmi < 18.5:
+        print("마른 체형입니다")
+    elif 18.5 <= bmi < 25.0:
+        print("표준 체형입니다")
+    elif 25.0 <= bmi < 30.0:
+        print("비만 체형입니다")
+    else:
+        print("고도 비만입니다")
+    answer = input("계속 하시겠습니까(y/n) ? ")
+    if answer.lower() != 'y':
+        break
+
+passwd="python123"
+tries=1
+while tries<6:
+    guess=input("비밀번호를 입력하세요.")
+    if guess==passwd:
+        print("비밀번호가 일치합니다.")
+        break
+    else:
+        print("비밀번호가 일치하지 않습니다.")
+        if tries!=5:
+            print("비밀번호 %d회 오류입니다." %tries)
+            print("%d회 남았습니다."%(5-tries))
+    tries+=1
+else:
+    print("처음부터 다시 시도하세요.")
+
+total = 0
+for score in [100, 98, 85, 97, 74]:
+    total += score
+average = total / 5;
+print("합 : %d" %total)
+print("평균 : %.2f" %average)
+
+total=0            
+for i in range(5):
+    score=int(input("성적을 입력하세요.:"))
+    total+=score
+average=total/(i+1)
+print("합계:%d\n평균:%d" %(total, average))
+
+total=0
+for i in range(10,101,2):
+    total+=i
+print("합:",total)
+
+import time
+for count in range(10,0,-1):
+    print(count, end=" ")#end=" "는 각 count별 간격 주는 것. 따옴표 사이에 , 넣으면 간격이 ,로 구분 됨.
+    time.sleep(1)
+print("start!")
+
+for number in range(1,101):
+    if number %3 ==0 and number %7==0:
+        print(number, end=",")
