@@ -1,0 +1,83 @@
+#pandas EDA(Exploratory Data Analysis)
+#데이터 미리보기
+import pandas as pd
+df = pd.read_csv('C:/Users/btg13/Downloads/auto-mpg.csv', header=None)
+df.columns = ['mpg','cylinders','displacement','horsepower','weight',
+'acceleration','model year','origin','name']#변수명 설정
+print(df.head())#앞 5개 행만 보기, 디폴트값이 5임
+print(df.tail(2))#뒤 2개 행만 보기
+print(df.shape)#데이터프레임 크기(행,열)를 tuple형태로 출력
+print(df.info())#데이터프레임에 과한 기본 정보 출력(클래스 유형, 행 인덱스 구성, 열 이름 종류와 개수, 각 열의 자료형과 개수, 메모리 할당량)
+print(df.dtypes)#info에서 열타입만 출력
+print(df.mpg.dtypes)#mpg의 열타입만 출력
+print(df.describe())#산술 데이터를 갖는 열에 대한 주요 기술통계정보(mean,sd,max,min,median(25%,50%,75%))출력
+print(df.describe(include='all'))#기술통계량의 모든 통계량 출력
+
+#데이터 개수 확인
+print(df.count())#열 자료의 개수 출력, 유효한 값의 개수만 나옴
+print(df.mpg.count())
+print(type(df.count()))
+unique_values = df['origin'].value_counts()#빈도분석
+'''
+각 열의 고유값(행 인덱스)의 종류와 개수(데이터 값)를 확인해 시리즈 객체 반환
+dropna=True:NaN제외
+디폴트 값: dropna=False(NaN 포함)
+'''
+unique_values.sort_index #빈도분석 순서대로 출력
+print(unique_values)
+print(type(unique_values))
+
+#통계함수 적용
+"계산결과를 시리즈 객체로 반환"
+#평균값
+print(df.mean())#모든 열의 평균값
+print(df['mpg'].mean())#mpg 열의 평균값
+print(df.mpg.mean())
+print(df[['mpg','weight']].mean())
+#중앙값
+print(df.median()); print(df['mpg'].median())
+#최대값
+print(df.max()); print(df['mpg'].max())
+#최소값
+print(df.min()); print(df['mpg'].min())
+#표준편차
+print(df.std()); print(df['mpg'].std())
+#상관계수
+'''
+– 산술 데이터를 갖는 두 열 간의 상관계수 계산
+– 모든 열에 대하여 2개씩 서로 짝을 짓고 각각의 경우에 상관계수 계산
+'''
+print(df.corr())#전체 상관계수
+print(df[['mpg','weight']].corr())#적어도 2개 이상의 리스트 구성 필요
+
+
+#내장 그래프 도구 활용
+'''
+그래프 종류(kind="line")
+‘line’ 선 그래프 / ‘kde’ 커널 밀도 그래프
+‘bar’ 수직 막대 그래프 / ‘area’ 면적 그래프
+‘barh’ 수평 막대 그래프 / ‘pie’ 파이 그래프
+‘his’ 히스토그램 / ‘scatter’ 산점도 그래프
+‘box’ 박스플롯 / ‘hexbin’ 고밀도 산점도 그래프
+'''
+import pandas as pd
+df = pd.read_excel('C:/Users/btg13/Downloads/남북한발전전력량.xlsx')
+df_ns = df.iloc[[0, 5], 3:]
+df_ns.index = ['South','North']#0을 south, 5를 north
+df_ns.columns = df_ns.columns.map(int)#열(clumns)이름을 인덱스/정수형형태(int)로 변환(map)시키는 것
+print(df_ns.head())
+df_ns.plot()#기본적인 선으로 표현한 그래프
+tdf_ns = df_ns.T#사용하면 index의 south와 north를 열 이름으로 행열 변환
+print(tdf_ns.head())
+tdf_ns.plot()
+tdf_ns.plot(kind='bar')#세로 막대 그래프
+tdf_ns.plot(kind='hist')#히스토그램
+
+import pandas as pd
+df = pd.read_csv('./auto-mpg.csv', header=None)
+df.columns = ['mpg','cylinders','displacement','horsepower','weight',
+'acceleration','model year','origin','name']
+df.plot(x='weight',y='mpg', kind='scatter')#산점도:두 변수의 관계를 나타내는 그래프
+df[['mpg','cylinders']].plot(kind='box')#각각의 박스플롯이 동시에 그려짐
+#박스플롯:데이터 분포와 분산 정도에 대한 정보 제공
+df.plot(kind='box')#전체에 대한 박스플롯
