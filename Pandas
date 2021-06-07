@@ -1,0 +1,164 @@
+#딕셔너리 구조 데이터 프레임으로 변환
+import pandas as pd
+dict_data = {'c0':[1,2,3], 'c1':[4,5,6], 'c2':[7,8,9], 'c3':[10,11,12], 'c4':[13,14,15]}
+df = pd.DataFrame(dict_data)
+print(type(df)) #df가 무슨 타입인지 프린트
+print('\n') #자동 줄 바꿈
+print(df)
+
+#행 인덱스/열 이름 설정
+import pandas as pd
+df = pd.DataFrame([[15, '남', '덕영중'], [17, '여', '수리중']],
+                  index=['준서', '예은'],
+                  columns=['나이', '성별', '학교'])
+print(df)
+
+#행 인덱스/열 이름 변경
+df=pd.DataFrame([[15, '남', '덕영중'], [17, '여', '수리중']],
+                  index=['준서', '예은'],
+                  columns=['나이', '성별', '학교'])
+#1
+df.index=['student1','student2']
+df.columns=['age','gender','group']
+print(df)
+#2
+df.rename(index={'학생1':'준서','학생2':'예은'}, inplace=True)
+df.rename(columns={'나이':'연령', '성별':'남녀', '학교':'소속'}, inplace=True)
+print(df)
+
+#행/열 삭제
+exam_data={'math':[90,80,70],'english':[98,78,88],
+           'music':[88,50,70],'gim':[99,100,70]}
+df=pd.DataFrame(exam_data, index=['서준','우현','은아'])
+print(df)
+print('\n')
+#행
+df2=df[:] #df의 값을 df2에 복사 할 때 "[:]처음~끝"을 사용
+df2.drop('우현', inplace=True)
+print(df2)
+print('\n')
+
+df3 = df[:]
+df3.drop(['우현', '인아'], axis=0, inplace=True)#행 제거 할 때 axis=0줌. 근데 디폴트 값이라 생략 가능
+print(df3)
+#열
+df4=df[:]
+df4.drop('math', axis=1, inplace=True)#열 제거할 때 axis=1꼭 붙여야 함.
+print(df4)
+
+df5=df[:]
+df5.drop(['math','gim'],axis=1, inplace=True)#여러개 삭제할 땐,list안에 변수 명 적기
+print(df5)
+
+#행/열/원소 선택
+exam_data={'math':[90,80,70],'english':[98,78,88],
+           'music':[88,50,70],'gim':[99,100,70]}
+df=pd.DataFrame(exam_data, index=['서준','우현','은아'])
+#행 선택
+df.loc['서준'] ; df.iloc[0]#loc는 인덱스 이름, iloc는 정수형 위치 인덱스
+df.loc[['서준', '우현']]; df.iloc[[0, 1]]
+df.loc['서준':'은아']; df.iloc[0:2]
+#열 선택(특별한 함수 없음.)
+df['math']; df.english
+df[['math','english']]
+#원소선택
+df.loc['은아','math']; df.iloc[2,0]
+df.loc['서준',['math','english']];df.iloc[0,[0,1]]
+df.loc['서준','english':'gim'];df.iloc[0,1:]
+df.loc['서준':'은아',['math','gim']]
+df.iloc[0:3,[0,3]]#lioc일 때, 0:3에서 마지막 순선 3은 포함 안됨 주의!
+
+#행/열 추가
+exam_data={'name':['서준','우현','은아'],
+           'math':[90,80,70],'english':[98,78,88],
+           'music':[88,50,70],'gim':[99,100,70]}
+df=pd.DataFrame(exam_data)
+print(df)
+#행 추가
+df.loc[3]=0
+df.loc[4]=['동규', 50, 70, 80,89]
+df.loc[5]=df.loc[2]
+df.loc['행5']=df.loc[2]
+#열 추가
+df['korean']=80
+df['social']=[10,50,80,90,70,57,80]
+
+#행, 열 위치 변경
+df.transpose()
+df.T
+#원소 변경
+df.set_index('name', inplace=True)#특정(name) 열을 행 인덱스로 설정
+print(df)
+
+df.iloc[0][2]=0 ; df.loc['서준']['music']=0 ; df.loc['서준','music']=0
+df.loc['서준', ['music', 'gim']] = 50
+df.loc['서준', ['music', 'gim']] = 100, 50
+df.iloc[2,0:4]=0
+df.reset_index(inplace=True) #초기값으로 되돌리기
+df.sort_index()#행 인덱스를 기준으로 DF 정렬
+df.sort_values(by='math')#특정(math) 열의 데이터 값을 기준으로 DF정렬/ascending=False:내림차순 정렬
+
+dict_data = {'c0':[1,2,3], 'c1':[4,5,6], 'c2':[7,8,9], 'c3':[10,11,12], 'c4':[13,14,15]}
+df = pd.DataFrame(dict_data, index=['r0', 'r1', 'r2'])
+new_index = ['r0', 'r1', 'r2', 'r3', 'r4']
+#행 인덱스 재배열
+df.reindex(new_index, fill_value=0)#NaN을 대체할 값을 0으로 함.
+#행 인덱스 초기화
+df.reset_index()
+#행 인덱스 기준 정렬
+df.sort_index(ascending=False)#옵션값:내림차순으로 바꿀거임.
+#특정 열 데이터값 기준 정렬
+df.sort_values(by='c1', ascending=False)#c1기준으로 내림차순 정렬
+
+#DataFrame:2차원 배열
+#Series:1차원 배열(한 줄로 이뤄진 벡터..?)
+#시리즈 연산(안나옴)
+'''
+-시리즈 (연산자) 숫자
+[1,2,3]+3=[4,5,6] 각 원소 별로 3이 더해짐
+-시리즈1 (연산자) 시리즈2
+[1,2,3]+[5,6,7]=[6,8,10] 각 자리별로 더해짐
+-NaN이 존재하는 경우
+어느 한 쪽의 데이터 값이 NaN인 경우 결과는 NaN
+fill_value= 옵션 넣으면 NaN대신 지정 숫자 대입으로 NaN없음
+-시리즈 끼리 연산하는 메서드 따로 존재.
+.add: 덧셈, .sub: 뺄셈
+.mul: 곱셈, .div : 나눗셈
+'''
+student1 = pd.Series({'국어':100, '영어':80, '수학':90})
+student2 = pd.Series({'수학':80, '국어':90})
+percentage = student1 / 200
+addition = student1 + student2; subtraction = student1 - student2
+multiplication = student1 * student2; division = student1 / student2
+result = pd.DataFrame([addition, subtraction, multiplication, division],
+                      index=['덧셈', '뺄셈', '곱셈', '나눗셈'])
+import numpy as np
+student1 = pd.Series({'국어':np.nan, '영어':80, '수학':90})
+addition = student1 + student2; subtraction = student1 - student2
+multiplication = student1 * student2; division = student1 / student2
+result = pd.DataFrame([addition, subtraction, multiplication, division],
+                      index=['덧셈', '뺄셈', '곱셈', '나눗셈'])
+import pandas as pd
+import numpy as np
+student1 = pd.Series({'국어':np.nan, '영어':80, '수학':90})
+student2 = pd.Series({'수학':80, '국어':90})
+sr_add = student1.add(student2, fill_value=0)
+sr_sub = student1.sub(student2, fill_value=0)
+sr_mul = student1.mul(student2, fill_value=0)
+sr_div = student1.div(student2, fill_value=0)
+result = pd.DataFrame([sr_add, sr_sub, sr_mul, sr_div],
+                      index=['덧셈', '뺄셈', '곱셈', '나눗셈'])
+#데이터프레임 연산
+"시리즈 연산이랑 연산자만 다르고 다 같음. DataFrame이 그냥 2차원인거..?"
+import pandas as pd
+import seaborn as sns
+titanic = sns.load_dataset('titanic')#sns속 titanic데이터를 불러옴
+df = titanic.loc[:, ['age','fare']]
+print(df.head())
+print(df.tail())
+addition = df + 10
+print(addition.head())
+print(addition.tail())
+subtraction = addition - df
+print(subtraction.head())
+print(subtraction.tail())
