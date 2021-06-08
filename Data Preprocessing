@@ -1,0 +1,228 @@
+#Data Preprocessing
+#누락 데이터 처리
+#누락 데이터 확인
+import seaborn as sns
+df = sns.load_dataset('titanic')
+nan_deck = df['deck'].value_counts(dropna=False)#선택 열의 범주별 개수 출력
+'dropna=False를 통해 누락 데이터 개수 확인 가능'
+print(nan_deck)
+print(df.head().isnull())#NaN=T
+print(df.head().notnull())#NaN=F
+print(df.head().isnull().sum(axis=0))
+
+#누락 데이터 제거
+import seaborn as sns
+df = sns.load_dataset('titanic')
+missing_df = df.isnull()#결측인 경우가 True
+for col in missing_df.columns:
+    missing_count = missing_df[col].value_counts()
+    try:#실행 될 때
+        print(col, ': ', missing_count[True])
+    except:#error일 때
+        print(col, ': ', 0)#True가 없으면 =0
+df_thresh = df.dropna(axis=1, thresh=500)#누락데이터 (axis=1)열 제거
+print(df_thresh.columns)
+df_age = df.dropna(subset=['age'],#제거할 행/열 선택
+                   how='any',#any=1개라도 NaN이 있을때 삭제/all=전부NaN면 삭제
+                   axis=0)#행(axis=0) 제거/없으면 에러
+print(len(df_age))
+
+#누락 데이터 치환
+'연속형-평균, 범주형-최빈값 많이 사용'
+import seaborn as sns
+df = sns.load_dataset('titanic')
+print(df['age'].head(10))
+mean_age = df['age'].mean(axis=0)
+df['age'].fillna(mean_age,#대체값
+                 inplace=True)
+print(df['age'].head(10))
+#최빈값(mode) 대체
+df = sns.load_dataset('titanic')
+print(df['embark_town'][825:830])
+most_freq = df['embark_town'].value_counts(dropna=True).idxmax()
+'idxmax()-최빈값 이름 가져오기'
+print(most_freq)
+df['embark_town'].fillna(most_freq, inplace=True)
+#앞자료 NaN에 집어넣기
+print(df['embark_town'][825:830])
+df = sns.load_dataset('titanic')
+print(df['embark_town'][825:830])
+df['embark_town'].fillna(method='ffill',#NaN바로 앞의 값으로 NaN대체
+                         inplace=True)
+print(df['embark_town'][825:830])
+
+#중복 데이터 처리
+#중복 확인
+import pandas as pd
+df = pd.DataFrame({'c1':['a', 'a', 'b', 'a', 'b'],
+'c2':[1, 1, 1, 2, 2],'c3':[1, 1, 2, 2, 2]})
+df_dup = df.duplicated()#중복 데이터면 T반환
+print(df_dup)
+#중복 제거
+import pandas as pd
+df = pd.DataFrame({'c1':['a', 'a', 'b', 'a', 'b'],
+'c2':[1, 1, 1, 2, 2],'c3':[1, 1, 2, 2, 2]})
+df2 = df.drop_duplicates()#전체 데이터셋을 기준으로 중복 행 제거
+df3 = df.drop_duplicates(subset=['c2', 'c3'])#선택열 기준으로 중복 행 제거
+#자료형 변환
+'''
+객체.dtypes : 자료형 확인
+객체.unique ( ) : 열의 고유값 확인
+객체.astype (‘변경할 자료형’) : 선택한 자료형으로 변환
+'''
+#지정값 변경
+import pandas as pd
+df = pd.read_csv('./auto-mpg.csv', header=None)
+df.columns = ['mpg','cylinders','displacement','horsepower','weight',
+'acceleration','model year','origin','name']
+print(df.dtypes);print(df['horsepower'].unique())#변수 속성 확인
+import numpy as np #불러야 지정값 변경 가능
+df['horsepower'].replace('?', np.nan, inplace=True)#?를 NaN으로 변환
+df.dropna(subset=['horsepower'], axis=0, inplace=True)#NaN제거
+df['horsepower'] = df['horsepower'].astype('float')#실수형 변경
+print(df['horsepower'].dtypes);print(df['origin'].unique())
+df['origin'].replace({1:'USA', 2:'EU', 3:'JAPAN'}, inplace=True)#명목으로 변경
+print(df['origin'].unique());print(df['origin'].dtypes)
+df['origin'] = df['origin'].astype('category')#카테고리로 변경
+print(df['origin'].dtypes)
+df['origin'] = df['origin'].astype('str')#문자형으로 변경
+print(df['origin'].dtypes)
+df['model year'] = df['model year'].astype('category')
+print(df['model year'].sample(3)) 
+
+#구간 분할
+count, bin_dividers = np.histogram(df['horsepower'], bins=3)#3개로 나누기 위해 hist사용
+bin_names = ['저출력', '보통출력', '고출력']
+'''
+객체.cut (x=데이터배열, bins=경계값 리스트
+labels=bin 이름, include_lowest=True/False)
+lowest=True(첫 경계값 포함)/False(첫 경계값 미포함)
+'''
+df['hp_bin'] = pd.cut(x=df['horsepower'], bins=bin_dividers,
+labels=bin_names, include_lowest=True)
+print(df[['horsepower', 'hp_bin']].head(15))
+
+#더미 변수(0 or 1)
+horsepower_dummies = pd.get_dummies(df['hp_bin'])
+print(horsepower_dummies.head(15))#객체.dummies(범주형data)
+
+#열 재구성
+'객체[재구성한 열 이름의 리스트]'
+
+#열 분리
+import pandas as pd
+df = pd.read_excel('./주가데이터.xlsx')
+print(df.head(), '\n')
+df['연월일'] = df['연월일'].astype('str')
+dates = df['연월일'].str.split('-')#-로 된거 나누기
+df['연'] = dates.str.get(0)#0번째꺼 가져오
+df['월'] = dates.str.get(1)#1번째꺼 가져오
+df['일'] = dates.str.get(2)#2번째꺼 가져오
+print(df.head())
+
+#필터링
+#불린 인덱싱
+import seaborn as sns
+titanic = sns.load_dataset('titanic')
+mask1 = (titanic.age >= 10) & (titanic.age < 20)
+df_teenage = titanic.loc[mask1, :]
+print(df_teenage.head())
+mask2 = (titanic.age < 10) & (titanic.sex == 'female')
+df_female_under10 = titanic.loc[mask2, :]
+print(df_female_under10.head())
+mask3 = (titanic.age < 10) | (titanic.age >= 60)#조건들
+df_under10_morethan60 = titanic.loc[mask3, ['age', 'sex', 'alone']]
+print(df_under10_morethan60.head())
+
+#열 객체.isin(추출값의 리스)메서드-그 안에 그 값이 있나요
+import seaborn as sns
+import pandas as pd
+titanic = sns.load_dataset('titanic')
+pd.set_option('display.max_columns', 10)
+#불린
+mask3 = titanic['sibsp'] == 3
+mask4 = titanic['sibsp'] == 4
+mask5 = titanic['sibsp'] == 5
+df_boolean = titanic[mask3 | mask4 | mask5]
+#isin
+isin_filter = titanic['sibsp'].isin([3, 4, 5])
+df_isin = titanic[isin_filter]
+print(df_isin.head())
+
+#데이터프레임 합치기(concat, merge, join)
+#데이터프레임 연결 concet
+'''
+서로 다른 데이터프레임들의 구성 형태와 속성이 균일할 때
+기존 데이터프레임의 형태를 유지하면서 이어 붙이는 개념
+ignore_index=True(기존 행 인덱스 무시)
+axis=0(행 연결)/1(열 연결)
+join=‘outer’(합집합으로 연결)/‘inner’(교집합으로 연결)
+
+pandas.concat(데이터프레임의 리스트, ignore_index=True/False,
+              axis=0/1, join=‘outer’/’inner’)'
+'''
+import pandas as pd
+df1 = pd.DataFrame({'a': ['a0', 'a1', 'a2', 'a3'], 'b': ['b0', 'b1', 'b2', 'b3'],
+                          'c': ['c0', 'c1', 'c2', 'c3']},
+index=[0, 1, 2, 3])
+df2 = pd.DataFrame({'a': ['a2', 'a3', 'a4', 'a5'], 'b': ['b2', 'b3', 'b4', 'b5'],
+                    'c': ['c2', 'c3', 'c4', 'c5'], 'd': ['d2', 'd3', 'd4', 'd5']},
+index=[2, 3, 4, 5])
+result1 = pd.concat([df1, df2])
+result2 = pd.concat([df1, df2], ignore_index=True)
+result3 = pd.concat([df1, df2], axis=1)
+result3_in = pd.concat([df1, df2], axis=1, join='inner')
+sr1 = pd.Series(['e0', 'e1', 'e2', 'e3'], name='e')
+sr2 = pd.Series(['f0', 'f1', 'f2'], name='f', index=[3, 4, 5])
+sr3 = pd.Series(['g0', 'g1', 'g2', 'g3'], name='g')
+result4 = pd.concat([df1, sr1], axis=1)
+result5 = pd.concat([df2, sr2], axis=1, sort=True)
+result6 = pd.concat([sr1, sr3], axis=1)
+result7 = pd.concat([sr1, sr3], axis=0)
+
+#데이터프레임 병합 merge
+'''
+어떤 기준(키)에 의해 두 데이터프레임을 병합
+키가 되는 열/인덱스는 양쪽 데이터프레임에 모두 존재해야 함
+how=‘outer’(합집합으로 연결)/‘inner’(교집합으로 연결)
+on=변수명: 기준이 되는 변수
+None인 경우 공통의 모든 열을 기준
+how=‘left’(왼쪽 데이터프레임 키에 속하는 데이터값 기준 병합)
+‘right’(오른쪽 데이터프레임 키에 속하는 데이터값 기준 병합)
+left_on=변수명: 좌우 다른 키를 줄 경우 왼쪽 데이터프레임 키
+right_on=변수명: 좌우 다른 키를 줄 경우 왼쪽 데이터프레임 키
+pandas.merge(df_left, df_right, how=‘outer’/’inner’,
+             on=기준변수, how=‘left’/’right’, left_on= , right_on= )
+'''
+import pandas as pd
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.max_colwidth', 20)
+pd.set_option('display.unicode.east_asian_width', True)
+df1 = pd.read_excel('./stock price.xlsx')
+df2 = pd.read_excel('./stock valuation.xlsx')
+merge_inner = pd.merge(df1, df2)
+merge_outer = pd.merge(df1, df2, how='outer', on='id')
+merge_left = pd.merge(df1, df2, how='left', left_on='stock_name',
+                      right_on='name')
+merge_right = pd.merge(df1, df2, how='right', left_on='stock_name',
+                       right_on='name')
+price = df1[df1['price'] < 50000]
+value = pd.merge(price, df2)
+
+#데이터프레임 결합 join 잘 안씀
+'''
+두 데이터프레임의 행 인덱스를 기준으로 결합
+데이터프레임1.join(데이터프레임2, how=‘left’/’inner’)
+how=‘left’(데이터프레임1 기준으로 결합)/
+‘inner’(공통으로 존재하는 행 인덱스 기준 결합)
+'''
+import pandas as pd
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.max_colwidth', 20)
+pd.set_option('display.unicode.east_asian_width', True)
+df1 = pd.read_excel('./stock price.xlsx', index_col='id')
+df2 = pd.read_excel('./stock valuation.xlsx', index_col='id')
+df3 = df1.join(df2)
+print(df3)
+df4 = df1.join(df2, how='inner')
+print(df4)
